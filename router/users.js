@@ -11,12 +11,19 @@ router.get('/authtoken', async (req, res) =>{
 })
 
 router.post('/users', auth.beforeLogin, async (req, res) =>{
-    const user = new User(req.body)
+    const user = new User(req.body);
+   console.log(user);
     try {
-        await user.save()
-        const token = await user.generateAuthToken()
+       await user.save(function(err) {
+            console.log(err);
+        })
+        // console.log(user)
+        // const token = await user.generateAuthToken();
+        const token = 'abcd';
+
         res.status(201).send(msgType.send('U-0001', {user, token}))
     } catch (e) {
+        console.log(e);
         res.status(400).send(msgType.send('U-0002', e, false))
     }
 })
