@@ -4,7 +4,7 @@ const User = require('../models/users')
 const auth = require('../middleware/auth')
 const jwt = require('jsonwebtoken')
 const msgType = require('../config/messageType')
-
+var request 		= require('request');
 router.get('/authtoken', async (req, res) =>{
     const token = jwt.sign( { apiKey: 'BinsSoft'}, process.env.JWT_SECRET)
     res.send({'token' : token})
@@ -12,19 +12,20 @@ router.get('/authtoken', async (req, res) =>{
 
 router.post('/users', auth.beforeLogin, async (req, res) =>{
     const user = new User(req.body);
-   console.log(user);
     try {
-       await user.save(function(err) {
-            console.log(err);
-        })
-        // console.log(user)
-        // const token = await user.generateAuthToken();
-        const token = 'abcd';
-
-        res.status(201).send(msgType.send('U-0001', {user, token}))
+        await user.save();
+        const token = await user.generateAuthToken();
+        res.status(200).send(msgType.send('U-0001', "Account created successfully"))
     } catch (e) {
-        console.log(e);
-        res.status(400).send(msgType.send('U-0002', e, false))
+        let errors = [];
+        if (e.errors) {
+            // console.log(e.errors)
+            let errorObj = Object.keys(e.errors);
+            errors = errorObj.map((i)=>{
+                return e.errors[i].properties.message;
+            })
+        }
+        res.status(200).send(msgType.send('U-0002', e, false))
     }
 })
 
@@ -44,7 +45,7 @@ router.post('/user/login', auth.beforeLogin, async (req, res) =>{
         res.send(msgType.send('U-0003', {user, token}))
     } catch (e){
         console.log(e)
-        return res.status(500).send(msgType.send('U-0004', e, false))
+        return res.status(200).send(msgType.send('U-0004', e, false))
     }
 })
 
@@ -80,5 +81,7 @@ router.patch('/user/me', auth.afterLogin, async (req, res) =>{
         return res.status(500).send(msgType.send('U-0010', e, false))
     }
 })
+
+
 
 module.exports = router

@@ -20,7 +20,7 @@ if(process.env.DB_DRIVER && process.env.DB_DRIVER=='mongo' ) {
         mongoConnectStr += '?authSource='+authdb;
     }
     console.log(mongoConnectStr);
-    mongoose.connect(mongoConnectStr,{ useNewUrlParser: true, useUnifiedTopology :true}, (err)=> {
+    mongoose.connect(mongoConnectStr,{ useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology :true}, (err)=> {
         console.log("3) Mongo db server starts")
     });
 }

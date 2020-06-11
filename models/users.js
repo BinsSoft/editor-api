@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const userSchema = new mongoose.Schema({
     name : {
         type : String,
-        required : true,
+        required : [true, "Name is required"],
         trim : true
     },
     email : {
@@ -14,16 +14,12 @@ const userSchema = new mongoose.Schema({
         unique: true,
         required : true,
         trim : true,
-        validate(value) {
-            if(!validator.isEmail(value)){
-                throw new Error('Email is invalid')
-            }
-        }
+        
     },
     password : {
         type : String,
-        required : true,
-        minlength : 6,
+        required : [true, "Password is required"],
+        minlength : [6, 'Password length minimum 6 characters'],
         trim : true,
         validate(value) {
             if(value.toLowerCase().includes('password')){

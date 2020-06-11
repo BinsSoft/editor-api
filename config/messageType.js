@@ -7,14 +7,14 @@ const AppConfig = {
         };
         if (success) {
             if (typeof data == 'object') {
-                result["data"] = data;
+                result["payload"] = data;
             } else {
-                result["message"] = data;
+                result["payload"] = data;
             }
-            result["statusText"] = 'success';
+            result["isSuccess"] = true;
         } else {
-            result["message"] = data;
-            result["statusText"] = 'error';
+            result["payload"] = data;
+            result["isSuccess"] = false;
         }
         return result;
     },
